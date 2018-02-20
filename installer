@@ -35,7 +35,15 @@ local function download(downloadPath, savePath)
 	term.setCursorPos(1, 17)
 	term.clearLine()
 	term.setCursorPos(1, 13)
-	shell.run("pastebin run 3PBKGR4k gh Xelostar/CCDoom/master/"..downloadPath.." "..savePath)
+	local cont = http.get("https://raw.githubusercontent.com/Xelostar/CCDoom/master/"..downloadPath)
+	if cont then
+		local file = fs.open(savePath,"w")
+		file.write(cont.readAll())
+		file.close()
+		return true
+	else
+		return false
+	end
 end
 
 local function pastebinD(code, savePath)
@@ -52,7 +60,15 @@ local function pastebinD(code, savePath)
 	term.setCursorPos(1, 17)
 	term.clearLine()
 	term.setCursorPos(1, 13)
-	shell.run("pastebin get "..code.." "..savePath)
+	local cont = http.get("https://pastebin.com/raw/"..code)
+	if cont then
+		local file = fs.open(savePath,"w")
+		file.write(cont.readAll())
+		file.close()
+		return true
+	else
+		return false
+	end
 end
 
 term.setBackgroundColor(colors.black)
@@ -160,10 +176,6 @@ download("Doom/models/enemy1", "/"..fs.combine(fs.combine(installpath, "models")
 bar(0.97)
 download("Doom/models/enemy2", "/"..fs.combine(fs.combine(installpath, "models"), "enemy2"))
 bar(0.99)
-
-update("Finishing installation...")
-fs.delete("/.std_list")
-fs.delete("/.std_websites")
 
 update("Installation finished!")
 bar(1)
